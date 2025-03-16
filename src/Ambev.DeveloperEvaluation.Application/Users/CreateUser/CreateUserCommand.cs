@@ -1,5 +1,6 @@
 ﻿using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.Domain.Enums;
+using Ambev.DeveloperEvaluation.Domain.QueryResult.Users;
 using MediatR;
 
 namespace Ambev.DeveloperEvaluation.Application.Users.CreateUser;
@@ -29,6 +30,16 @@ public class CreateUserCommand : IRequest<CreateUserResult>
     /// Gets or sets the password for the user.
     /// </summary>
     public string Password { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the user's full name, including first and last names.
+    /// </summary>
+    public NameQueryResult Name { get; set; } = new NameQueryResult();
+
+    /// <summary>
+    /// Gets or sets the user's address, including city, street, number, zip code, and geolocation.
+    /// </summary>
+    public AddressQueryResult Address { get; set; } = new AddressQueryResult();
 
     /// <summary>
     /// Gets or sets the phone number for the user.

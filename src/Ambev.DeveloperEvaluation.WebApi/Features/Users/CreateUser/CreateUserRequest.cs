@@ -1,4 +1,5 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Enums;
+using Ambev.DeveloperEvaluation.Domain.QueryResult.Users;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Users.CreateUser;
 
@@ -16,6 +17,16 @@ public class CreateUserRequest
     /// Gets or sets the password. Must meet security requirements.
     /// </summary>
     public string Password { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the user's full name, including first and last names.
+    /// </summary>
+    public NameQueryResult Name { get; set; } = new NameQueryResult();
+
+    /// <summary>
+    /// Gets or sets the user's address, including city, street, number, zip code, and geolocation.
+    /// </summary>
+    public AddressQueryResult Address { get; set; } = new AddressQueryResult();
 
     /// <summary>
     /// Gets or sets the phone number in format (XX) XXXXX-XXXX.
