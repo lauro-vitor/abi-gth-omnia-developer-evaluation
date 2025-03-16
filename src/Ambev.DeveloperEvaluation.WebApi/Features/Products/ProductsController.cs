@@ -2,6 +2,7 @@
 using Ambev.DeveloperEvaluation.Application.Products.DeleteProduct;
 using Ambev.DeveloperEvaluation.Application.Products.GetAllCategories;
 using Ambev.DeveloperEvaluation.Application.Products.GetAllProduct;
+using Ambev.DeveloperEvaluation.Application.Products.GetAllProductsByCategory;
 using Ambev.DeveloperEvaluation.Application.Products.GetByIdProduct;
 using Ambev.DeveloperEvaluation.Application.Products.UpdateProduct;
 using Ambev.DeveloperEvaluation.Domain.Entities;
@@ -58,13 +59,34 @@ public class ProductsController : BaseController
     [HttpGet]
     public async Task<IActionResult> GetAll([FromQuery] GetAllProductRequest request, CancellationToken cancellationToken)
     {
-        GetAllProductCommand command = _mapper.Map<GetAllProductCommand>(request);
+        var command = _mapper.Map<GetAllProductCommand>(request);
 
         var result = await _mediator.Send(command, cancellationToken);
 
         var paginatedList = await PaginatedList<ProductQueryResult>.CreateAsync(
             result.QueryProducts, 
             request.PageNumber, 
+            request.PageSize
+          );
+
+        return OkPaginated(paginatedList);
+    }
+
+
+    [HttpGet("categories/{category}")]
+    public async Task<IActionResult> GetAllProductsByCategory([FromRoute] string category,[FromQuery] GetAllProductRequest request, CancellationToken cancellationToken)
+    {
+        var command = new GetAllProductsByCategoryCommand
+        {
+            Category = category,
+            Order = request.Order,
+        };
+
+        var result = await _mediator.Send(command, cancellationToken);
+
+        var paginatedList = await PaginatedList<ProductQueryResult>.CreateAsync(
+            result.QueryProducts,
+            request.PageNumber,
             request.PageSize
           );
 

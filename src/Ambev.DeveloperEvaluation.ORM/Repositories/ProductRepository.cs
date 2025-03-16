@@ -74,23 +74,23 @@ public class ProductRepository : IProductRepository, IDisposable
 
             var endsWithWildcard = category.EndsWith('*');
 
-            var cleanCategory = category.Trim('*');
+            var cleanCategory = category.Trim('*').ToLower();
 
             if (startsWithWildcard && endsWithWildcard)
             {
-                query = query.Where(p => p.Category.Contains(cleanCategory));
+                query = query.Where(p => p.Category.ToLower().Contains(cleanCategory));
             }
             else if (startsWithWildcard)
             {
-                query = query.Where(p => p.Category.EndsWith(cleanCategory));
+                query = query.Where(p => p.Category.ToLower().EndsWith(cleanCategory));
             }
             else if (endsWithWildcard)
             {
-                query = query.Where(p => p.Category.StartsWith(cleanCategory));
+                query = query.Where(p => p.Category.ToLower().StartsWith(cleanCategory));
             }
             else
             {
-                query = query.Where(p => p.Category == cleanCategory);
+                query = query.Where(p => p.Category.ToLower().Equals(cleanCategory));
             }
         }
 
