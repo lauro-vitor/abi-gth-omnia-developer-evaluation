@@ -20,6 +20,18 @@ public class User : BaseEntity, IUser
     public string Username { get; set; } = string.Empty;
 
     /// <summary>
+    /// Gets or sets the user's first name.
+    /// This field is required and must not be null or empty.
+    /// </summary>
+    public string Firstname { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the user's last name.
+    /// This field is required and must not be null or empty.
+    /// </summary>
+    public string Lastname { get; set; } = string.Empty;
+
+    /// <summary>
     /// Gets the user's email address.
     /// Must be a valid email format and is used as a unique identifier for authentication.
     /// </summary>
