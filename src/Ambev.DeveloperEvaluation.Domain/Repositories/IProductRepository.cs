@@ -1,4 +1,5 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.QueryResult;
 
 namespace Ambev.DeveloperEvaluation.Domain.Repositories;
 
@@ -34,19 +35,10 @@ public interface IProductRepository
     /// <summary>
     /// Retrieves a paginated list of products, optionally filtered by category and ordered by a specified field.
     /// </summary>
-    /// <param name="page">The page number to retrieve (default is 1).</param>
-    /// <param name="size">The number of products per page (default is 10).</param>
     /// <param name="order">The field by which to order the products (e.g., "price desc, title asc") (optional).</param>
     /// <param name="category">The category to filter the products by (optional).</param>
-    /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>A list of products.</returns>
-    Task<IEnumerable<Product>> GetAllAsync(
-        int page = 1,
-        int size = 10,
-        string? order = null,
-        string? category = null,
-        CancellationToken cancellationToken = default
-    );
+    IQueryable<ProductQueryResult> GetAll(string? category, string? order);
 
     /// <summary>
     /// Retrieves all available product categories.

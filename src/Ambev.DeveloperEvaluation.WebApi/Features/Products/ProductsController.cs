@@ -1,9 +1,14 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Products.CreateProduct;
 using Ambev.DeveloperEvaluation.Application.Products.DeleteProduct;
 using Ambev.DeveloperEvaluation.Application.Products.GetAllCategories;
+using Ambev.DeveloperEvaluation.Application.Products.GetAllProduct;
 using Ambev.DeveloperEvaluation.Application.Products.GetByIdProduct;
 using Ambev.DeveloperEvaluation.Application.Products.UpdateProduct;
+using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.QueryResult;
+using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.CreateProduct;
+using Ambev.DeveloperEvaluation.WebApi.Features.Products.GetAllProduct;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.GetByIdProduct;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.UpdateProduct;
 using AutoMapper;
@@ -15,7 +20,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Products;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ProductsController : Controller
+public class ProductsController : BaseController
 {
     private readonly IMediator _mediator;
     private readonly IMapper _mapper;
@@ -51,9 +56,19 @@ public class ProductsController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll([FromQuery] GetAllProductRequest request, CancellationToken cancellationToken)
     {
-        return Ok();
+        GetAllProductCommand command = _mapper.Map<GetAllProductCommand>(request);
+
+        var result = await _mediator.Send(command, cancellationToken);
+
+        var paginatedList = await PaginatedList<ProductQueryResult>.CreateAsync(
+            result.QueryProducts, 
+            request.PageNumber, 
+            request.PageSize
+          );
+
+        return OkPaginated(paginatedList);
     }
 
     [HttpGet("categories")]

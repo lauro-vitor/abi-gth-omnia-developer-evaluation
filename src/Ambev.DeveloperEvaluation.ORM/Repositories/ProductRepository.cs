@@ -1,4 +1,5 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.QueryResult;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -39,21 +40,119 @@ public class ProductRepository : IProductRepository, IDisposable
         return true;
     }
 
-    public async Task<IEnumerable<Product>> GetAllAsync(
-        int page = 1,
-        int size = 10,
-        string? order = null,
-        string? category = null,
-        CancellationToken cancellationToken = default
-     )
+    public IQueryable<ProductQueryResult> GetAll(string? category, string? order)
     {
-        var resultProducts = await _context.Products
+        var query = _context.Products
             .AsNoTracking()
-            .Skip((page - 1) * size)
-            .Take(size)
-            .ToListAsync(cancellationToken);
+            .Select(p => new ProductQueryResult
+            {
+                Id = p.Id,
+                Title = p.Title,
+                Price = p.Price,
+                Description = p.Description,
+                Category = p.Category,
+                Image = p.Image,
+                Rating = new ProductRating
+                {
+                    Count = p.Count,
+                    Rate = p.Rate
+                }
+            });
 
-        return resultProducts;
+        query = FilterProducts(category, query);
+
+        query = SortProducts(order, query);
+
+        return query;
+    }
+
+    private static IQueryable<ProductQueryResult> FilterProducts(string? category, IQueryable<ProductQueryResult> query)
+    {
+        if (!string.IsNullOrWhiteSpace(category))
+        {
+            var startsWithWildcard = category.StartsWith('*');
+
+            var endsWithWildcard = category.EndsWith('*');
+
+            var cleanCategory = category.Trim('*');
+
+            if (startsWithWildcard && endsWithWildcard)
+            {
+                query = query.Where(p => p.Category.Contains(cleanCategory));
+            }
+            else if (startsWithWildcard)
+            {
+                query = query.Where(p => p.Category.EndsWith(cleanCategory));
+            }
+            else if (endsWithWildcard)
+            {
+                query = query.Where(p => p.Category.StartsWith(cleanCategory));
+            }
+            else
+            {
+                query = query.Where(p => p.Category == cleanCategory);
+            }
+        }
+
+        return query;
+    }
+
+    private static IQueryable<ProductQueryResult> SortProducts(string? order, IQueryable<ProductQueryResult> query)
+    {
+        if (string.IsNullOrWhiteSpace(order))
+        {
+            return query.OrderBy(p => p.Id);
+        }
+
+        var sortClauses = order.Split(',')
+            .Select(o => o.Trim())
+            .Where(o => !string.IsNullOrEmpty(o))
+            .ToArray();
+
+        bool isFirst = true;
+
+        foreach (var sortClauseItem in sortClauses)
+        {
+            var sortCriteria = sortClauseItem.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+            if (sortCriteria.Length == 0)
+            {
+                continue;
+            }
+
+            var sortProperty = sortCriteria[0].Trim();
+
+            var sortDirection = sortCriteria.ElementAtOrDefault(1)?.Trim().ToLower() ?? "asc";
+
+            Expression<Func<ProductQueryResult, object>> sortExpression = sortProperty switch
+            {
+                "title" => p => p.Title,
+                "price" => p => p.Price,
+                "description" => p => p.Description,
+                "category" => p => p.Category,
+                "image" => p => p.Image,
+                "rate" => p => p.Rating.Rate,
+                "count" => p => p.Rating.Count,
+                _ => p => p.Id,
+            };
+
+            if (isFirst)
+            {
+                query = sortDirection == "desc" ?
+                    query.OrderByDescending(sortExpression) :
+                    query.OrderBy(sortExpression);
+
+                isFirst = false;
+            }
+            else
+            {
+                query = sortDirection == "desc" ?
+                    ((IOrderedQueryable<ProductQueryResult>)query).ThenByDescending(sortExpression) :
+                    ((IOrderedQueryable<ProductQueryResult>)query).ThenBy(sortExpression);
+            }
+        }
+
+        return query;
     }
 
     public async Task<IEnumerable<string>> GetAllCategoriesAsync(CancellationToken cancellationToken = default)
@@ -65,9 +164,11 @@ public class ProductRepository : IProductRepository, IDisposable
             .ToListAsync(cancellationToken);
     }
 
-    public Task<Product?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<Product?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        return _context.Products.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+        var product = await _context.Products.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+
+        return product;
     }
 
     public async Task<Product?> UpdateAsync(Product product, CancellationToken cancellationToken = default)
