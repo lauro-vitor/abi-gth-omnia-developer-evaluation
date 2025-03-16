@@ -61,6 +61,43 @@ public class User : BaseEntity, IUser
     public DateTime? UpdatedAt { get; set; }
 
     /// <summary>
+    /// Gets or sets the city where the user resides.
+    /// This field is required and must not be null or empty.
+    /// </summary>
+    public string City { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the street where the user resides.
+    /// This field is required and must not be null or empty.
+    /// </summary>
+    public string Street { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the number of the user's residence.
+    /// This field is optional and must be a valid positive integer if provided.
+    /// Example: 123 (for a residence number like "123 Main St").
+    /// </summary>
+    public int? Number { get; set; }
+
+    /// <summary>
+    /// Gets or sets the zip code of the user's residence.
+    /// This field is required and must follow the standard zip code format for the user's country.
+    /// </summary>
+    public string Zipcode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the latitude of the user's geolocation.
+    /// This field is required and must be a valid latitude value in decimal degrees format..
+    /// </summary>
+    public string GeolocationLat { get; set; }
+
+    /// <summary>
+    /// Gets or sets the longitude of the user's geolocation.
+    /// This field is required and must be a valid longitude value in decimal degrees format.
+    /// </summary>
+    public string GeolocationLong { get; set; }
+
+    /// <summary>
     /// Gets the unique identifier of the user.
     /// </summary>
     /// <returns>The user's ID as a string.</returns>
