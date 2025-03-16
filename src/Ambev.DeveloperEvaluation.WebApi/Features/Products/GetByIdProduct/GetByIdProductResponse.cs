@@ -1,4 +1,4 @@
-﻿using Ambev.DeveloperEvaluation.WebApi.Features.Products.Models;
+﻿using Ambev.DeveloperEvaluation.Domain.QueryResult;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Products.GetByIdProduct;
 
