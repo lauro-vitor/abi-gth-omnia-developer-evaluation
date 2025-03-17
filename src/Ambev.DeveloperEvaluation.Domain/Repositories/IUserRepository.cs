@@ -24,6 +24,12 @@ public interface IUserRepository
     Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Retrieves all users in a queryable format, allowing for further filtering, sorting, and paging.
+    /// </summary>
+    /// <returns>An <see cref="IQueryable{User}"/> representing the collection of users, which can be further manipulated before execution.</returns>
+    IQueryable<User> GetAllUsers();
+
+    /// <summary>
     /// Retrieves a user by their email address
     /// </summary>
     /// <param name="email">The email address to search for</param>

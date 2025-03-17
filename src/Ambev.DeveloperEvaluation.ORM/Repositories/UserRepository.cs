@@ -41,7 +41,7 @@ public class UserRepository : IUserRepository
     /// <returns>The user if found, null otherwise</returns>
     public async Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _context.Users.FirstOrDefaultAsync(o=> o.Id == id, cancellationToken);
+        return await _context.Users.FirstOrDefaultAsync(o => o.Id == id, cancellationToken);
     }
 
     /// <summary>
@@ -71,5 +71,14 @@ public class UserRepository : IUserRepository
         _context.Users.Remove(user);
         await _context.SaveChangesAsync(cancellationToken);
         return true;
+    }
+
+    /// <summary>
+    /// Retrieves all users in a queryable format, allowing for further filtering, sorting, and paging.
+    /// </summary>
+    /// <returns>An <see cref="IQueryable{User}"/> representing the collection of users, which can be further manipulated before execution.</returns>
+    public IQueryable<User> GetAllUsers()
+    {
+        return _context.Users.AsNoTracking();
     }
 }

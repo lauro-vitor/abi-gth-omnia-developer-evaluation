@@ -8,6 +8,9 @@ using Ambev.DeveloperEvaluation.WebApi.Features.Users.DeleteUser;
 using Ambev.DeveloperEvaluation.Application.Users.CreateUser;
 using Ambev.DeveloperEvaluation.Application.Users.GetUser;
 using Ambev.DeveloperEvaluation.Application.Users.DeleteUser;
+using Ambev.DeveloperEvaluation.WebApi.Features.Users.GetAllUsers;
+using Ambev.DeveloperEvaluation.Application.Users.GetAllUsers;
+using Ambev.DeveloperEvaluation.Domain.QueryResult.Users;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Users;
 
@@ -82,6 +85,30 @@ public class UsersController : BaseController
         var response = _mapper.Map<GetUserResponse>(result);
 
         return Ok(response);
+    }
+    /// <summary>
+    /// Retrieves all users
+    /// </summary>
+    /// <param name="id">The unique identifier of the user</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>A paginated list of usres</returns>
+    [HttpGet()]
+    [ProducesResponseType(typeof(PaginatedList<UserQueryResult>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetAllUsers([FromQuery] GetAllUsersRequest request, CancellationToken cancellationToken)
+    {
+        var command = _mapper.Map<GetAllUsersCommand>(request);
+
+        var result = await _mediator.Send(command, cancellationToken);
+
+        var paginatedList = await PaginatedList<UserQueryResult>.CreateAsync(
+            result.QueryUsersResult,
+            request.PageNumber,
+            request.PageSize
+          );
+
+        return OkPaginated(paginatedList);
     }
 
     /// <summary>
