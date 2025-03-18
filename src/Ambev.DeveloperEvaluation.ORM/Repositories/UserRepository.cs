@@ -53,6 +53,7 @@ public class UserRepository : IUserRepository
     public async Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
         return await _context.Users
+            .AsNoTracking()
             .FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
     }
 
@@ -80,5 +81,19 @@ public class UserRepository : IUserRepository
     public IQueryable<User> GetAllUsers()
     {
         return _context.Users.AsNoTracking();
+    }
+    /// <summary>
+    /// Update an user in the database
+    /// </summary>
+    /// <param name="user">The user to update</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The updated user</returns>
+    public async Task<User> UpdateAsync(User user, CancellationToken cancellationToken = default)
+    {
+        _context.Users.Update(user);
+
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return user;
     }
 }

@@ -11,6 +11,8 @@ using Ambev.DeveloperEvaluation.Application.Users.DeleteUser;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.GetAllUsers;
 using Ambev.DeveloperEvaluation.Application.Users.GetAllUsers;
 using Ambev.DeveloperEvaluation.Domain.QueryResult.Users;
+using Ambev.DeveloperEvaluation.WebApi.Features.Users.UpdateUser;
+using Ambev.DeveloperEvaluation.Application.Users.UpdateUser;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Users;
 
@@ -62,6 +64,48 @@ public class UsersController : BaseController
     }
 
     /// <summary>
+    /// Updates an existing user.
+    /// </summary>
+    /// <remarks>
+    /// This endpoint updates an existing user in the system based on the provided ID and request data.
+    /// The request data is validated using <see cref="UpdateUserRequestValidator"/> before processing.
+    /// If the validation fails, a <see cref="BadRequestObjectResult"/> is returned with the validation errors.
+    /// If the update is successful, the updated user details are returned.
+    /// </remarks>
+    /// <param name="id">The unique identifier of the user to be updated.</param>
+    /// <param name="request">The request containing the updated user data.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>
+    /// <list type="bullet">
+    ///     <item><description><b>200 OK</b>: Returns the updated user details in the response body.</description></item>
+    ///     <item><description><b>400 Bad Request</b>: Returns validation errors if the request data is invalid.</description></item>
+    /// </list>
+    /// </returns>
+    [HttpPut("{id}")] // Alterado para HttpPut, que é mais adequado para operações de atualização
+    [ProducesResponseType(typeof(UpdateUserResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UpdateUser(
+        [FromRoute] Guid id,
+        [FromBody] UpdateUserRequest request,
+        CancellationToken cancellationToken)
+    {
+        var validator = new UpdateUserRequestValidator();
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
+            return BadRequest(validationResult.Errors);
+
+        var command = _mapper.Map<UpdateUserCommand>(request);
+        command.Id = id;
+
+        var result = await _mediator.Send(command, cancellationToken);
+
+        var response = _mapper.Map<UpdateUserResponse>(result);
+
+        return Ok(response);
+    }
+
+    /// <summary>dsadsa
     /// Retrieves a user by their ID
     /// </summary>
     /// <param name="id">The unique identifier of the user</param>
