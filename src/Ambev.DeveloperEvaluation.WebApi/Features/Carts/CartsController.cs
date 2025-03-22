@@ -1,4 +1,5 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Carts.CreateCart;
+using Ambev.DeveloperEvaluation.Application.Carts.DeleteCart;
 using Ambev.DeveloperEvaluation.Application.Carts.GetByIdCart;
 using Ambev.DeveloperEvaluation.Application.Carts.UpdateCart;
 using Ambev.DeveloperEvaluation.WebApi.Common;
@@ -57,6 +58,20 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Carts
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
             var command = new GetByIdCartCommand
+            {
+                Id = id
+            };
+
+            var result = await _mediator.Send(command);
+
+            return Ok(result);
+        }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(typeof(DeleteCartResult), StatusCodes.Status200OK)]
+        public async Task<IActionResult> Delete([FromRoute] int id)
+        {
+            var command = new DeleteCartCommand
             {
                 Id = id
             };
