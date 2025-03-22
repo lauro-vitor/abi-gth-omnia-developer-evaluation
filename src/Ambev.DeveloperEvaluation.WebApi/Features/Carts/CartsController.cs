@@ -1,4 +1,5 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Carts.CreateCart;
+using Ambev.DeveloperEvaluation.Application.Carts.GetByIdCart;
 using Ambev.DeveloperEvaluation.Application.Carts.UpdateCart;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Carts.CreateCart;
@@ -49,6 +50,20 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Carts
             var response = _mapper.Map<UpdateCartResponse>(result);
 
             return Ok(response);
+        }
+
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(GetByIdCartResult), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetById([FromRoute] int id)
+        {
+            var command = new GetByIdCartCommand
+            {
+                Id = id
+            };
+
+            var result = await _mediator.Send(command);
+
+            return Ok(result);
         }
     }
 }
