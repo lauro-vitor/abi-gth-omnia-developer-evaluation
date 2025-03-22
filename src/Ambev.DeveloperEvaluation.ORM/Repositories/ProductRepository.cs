@@ -66,6 +66,13 @@ public class ProductRepository : IProductRepository, IDisposable
         return query;
     }
 
+    public async Task<List<Product>> GetAllAsync(int[] ids, CancellationToken cancellationToken = default)
+    {
+        return await _context.Products
+            .Where(p => ids.Contains(p.Id))
+            .ToListAsync(cancellationToken);
+    }
+
     private static IQueryable<ProductQueryResult> FilterProducts(string? category, IQueryable<ProductQueryResult> query)
     {
         if (!string.IsNullOrWhiteSpace(category))
@@ -194,5 +201,7 @@ public class ProductRepository : IProductRepository, IDisposable
         _context?.Dispose();
         GC.SuppressFinalize(this);
     }
+
+  
 }
 

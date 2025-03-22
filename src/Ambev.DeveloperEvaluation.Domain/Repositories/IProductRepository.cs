@@ -32,6 +32,8 @@ public interface IProductRepository
     /// <returns>The product if found; otherwise, null.</returns>
     Task<Product?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
 
+    Task<List<Product>> GetAllAsync(int[] ids, CancellationToken cancellationToken = default);
+
     /// <summary>
     /// Retrieves a paginated list of products, optionally filtered by category and ordered by a specified field.
     /// </summary>
