@@ -1,9 +1,11 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Carts.CreateCart;
 using Ambev.DeveloperEvaluation.Application.Carts.DeleteCart;
+using Ambev.DeveloperEvaluation.Application.Carts.GetAllCart;
 using Ambev.DeveloperEvaluation.Application.Carts.GetByIdCart;
 using Ambev.DeveloperEvaluation.Application.Carts.UpdateCart;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Carts.CreateCart;
+using Ambev.DeveloperEvaluation.WebApi.Features.Carts.GetAllCart;
 using Ambev.DeveloperEvaluation.WebApi.Features.Carts.UpdateCart;
 using AutoMapper;
 using MediatR;
@@ -51,6 +53,23 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Carts
             var response = _mapper.Map<UpdateCartResponse>(result);
 
             return Ok(response);
+        }
+
+        [HttpGet]
+        [ProducesResponseType(typeof(PaginatedList<GetAllCartResult>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAll([FromQuery] GetAllCartRequest request)
+        {
+            var command = _mapper.Map<GetAllCartCommand>(request);
+
+            var result = await _mediator.Send(command);
+
+            var response = await PaginatedList<GetAllCartResult>.CreateAsync(
+                source: result,
+                pageNumber: request.PageNumber,
+                pageSize: request.PageSize
+            );
+
+            return OkPaginated(response);
         }
 
         [HttpGet("{id}")]
