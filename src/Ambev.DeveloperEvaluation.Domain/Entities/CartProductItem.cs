@@ -26,6 +26,11 @@
 
         public void Create(int cartId, Product product, int quantity)
         {
+            if (quantity <= 0)
+            {
+                throw new ArgumentException("Quantity must be greater than zero.", nameof(quantity));
+            }
+
             CartId = cartId;
             Product = product;
             ProductId = product.Id;
@@ -35,6 +40,11 @@
 
         public void Update(Product product, int quantity)
         {
+            if (quantity <= 0)
+            {
+                throw new ArgumentException("Quantity must be greater than zero.", nameof(quantity));
+            }
+
             Product = product;
             ProductId = product.Id;
             Quantity = quantity;

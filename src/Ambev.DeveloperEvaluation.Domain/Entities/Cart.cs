@@ -26,15 +26,6 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
             User = new User();
         }
 
-        public void AddProductItem(int cartId, Product product, int quantity)
-        {
-            var cartProductItem = new CartProductItem();
-
-            cartProductItem.Create(cartId, product, quantity);
-
-            CartProductItems.Add(cartProductItem);
-        }
-
         public void Create(DateTime date, User user)
         {
             Date = date;
@@ -44,12 +35,60 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
             Status = CartStatus.Open;
         }
 
-        public void Update(DateTime date, User user) 
+        public void Update(DateTime date, User user)
         {
             Date = date;
             User = user;
             UserId = user.Id;
             UpdateAt = DateTime.UtcNow;
+        }
+
+        public void AddProductItem(Product product, int quantity)
+        {
+            if (ExistsProductInCart(product)) 
+            {
+                return;
+            }
+
+            var cartProductItem = new CartProductItem();
+
+            cartProductItem.Create(Id, product, quantity);
+
+            CartProductItems.Add(cartProductItem);
+        }
+
+        public void UpdateProductItem(Product product, int quantity)
+        {
+            var cartProductItemToUpdate = CartProductItems.FirstOrDefault(p => p.ProductId == product.Id);
+
+            if (cartProductItemToUpdate != null)
+            {
+                cartProductItemToUpdate.Update(product, quantity);
+            }
+        }
+
+        public bool ExistsProductInCart(Product product)
+        {
+            return CartProductItems.Any(p => p.ProductId == product.Id);
+        }
+
+        public void ClearProductItems()
+        {
+            CartProductItems.Clear();
+        }
+
+        public void RemoveProductItems(List<Product> products)
+        {
+            var productIdsToKeep = new HashSet<int>(products.Select(p => p.Id));
+
+            var itemsToRemove = CartProductItems
+                .Where(item => !productIdsToKeep.Contains(item.ProductId))
+                .ToList();
+
+            foreach (var item in itemsToRemove)
+            {
+                CartProductItems.Remove(item);
+            }
         }
 
     }

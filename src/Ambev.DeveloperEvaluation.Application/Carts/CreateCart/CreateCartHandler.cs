@@ -56,7 +56,7 @@ namespace Ambev.DeveloperEvaluation.Application.Carts.CreateCart
                         throw new InvalidOperationException("Product not found.");
                     }
 
-                    cart.AddProductItem(cart.Id, product, productCommandItem.Quantity);
+                    cart.AddProductItem(product, productCommandItem.Quantity);
                 }
             }
 
