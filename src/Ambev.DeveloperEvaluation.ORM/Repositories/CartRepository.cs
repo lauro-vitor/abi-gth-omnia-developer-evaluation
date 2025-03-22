@@ -33,7 +33,10 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
 
         public async Task<Cart?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {
-            return await _context.Carts.FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
+            return await _context.Carts
+                .Include(c => c.CartProductItems)
+                .ThenInclude(c => c.Product)
+                .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
         }
 
         public async Task<Cart?> GetByIdAsNoTrackingAsync(int id, CancellationToken cancellationToken = default)
