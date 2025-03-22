@@ -56,6 +56,8 @@ public class Product
     /// </summary>
     public DateTime? UpdatedAt { get; set; }
 
+    public virtual ICollection<CartProductItem> CartProducts { get; set; } = [];
+
     /// <summary>
     /// Initializes a new instance of the <see cref="Product"/> class.
     /// Sets the creation date to the current date and time in UTC.
