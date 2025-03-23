@@ -33,18 +33,20 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.CreateSales
             {
                 Branch = command.Branch,
                 Date = command.Date,
-                SaleNumber = command.SaleNumber,
                 Cart = cart,
                 CartId = cart.Id,
                 User = cart.User,
                 UserId = cart.User.Id,
                 CreatedAt = DateTime.UtcNow,
-                Status = SaleStatus.Active
+                Status = SaleStatus.Active,
+                SaleNumber = await _saleRepository.GetNextSaleNumberAsync(cancellationToken)
             };
 
             sale.Validate();
             sale.AddProductProductsItems(cart);
             sale.CalculateTotals();
+
+            cart.SetStatusAsSaleConfirmed();
 
             await _saleRepository.CreateAsync(sale, cancellationToken);
 

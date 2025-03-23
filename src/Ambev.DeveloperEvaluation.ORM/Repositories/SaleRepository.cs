@@ -1,5 +1,6 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ambev.DeveloperEvaluation.ORM.Repositories
 {
@@ -17,6 +18,22 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
             await _context.Sales.AddAsync(sale, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
             return sale;
+        }
+
+       
+
+        public async Task<int> GetNextSaleNumberAsync(CancellationToken cancellationToken = default)
+        {
+            var maxSaleNumber = await _context.Sales
+                .AsNoTracking()
+                .MaxAsync(s => s.SaleNumber, cancellationToken);
+
+            if(maxSaleNumber <= 0)
+            {
+                return 1;
+            }
+
+            return maxSaleNumber + 1;
         }
 
         public void Dispose()
