@@ -128,5 +128,11 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
             UpdatedAt = DateTime.UtcNow;
         }
 
+        public void Activate()
+        {
+            Status = SaleStatus.Active;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
     }
 }
