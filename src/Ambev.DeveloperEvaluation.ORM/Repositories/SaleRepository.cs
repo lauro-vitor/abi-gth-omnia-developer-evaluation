@@ -60,12 +60,28 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
                 .FirstOrDefaultAsync(filterExpression, cancellationToken);
         }
 
+        public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default)
+        {
+            var sale = await _context.Sales.Include(s => s.SaleProductItems).FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
+
+            if (sale == null)
+            {
+                return false;
+            }
+
+            _context.SaleProductItems.RemoveRange(sale.SaleProductItems);
+           
+            _context.Sales.Remove(sale);
+
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return true;
+        }
+
         public void Dispose()
         {
             _context?.Dispose();
             GC.SuppressFinalize(this);
         }
-
-
     }
 }

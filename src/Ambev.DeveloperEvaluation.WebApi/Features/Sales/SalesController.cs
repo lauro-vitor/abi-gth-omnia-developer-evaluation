@@ -3,6 +3,7 @@ using Ambev.DeveloperEvaluation.Application.Sales.ActivateSales;
 using Ambev.DeveloperEvaluation.Application.Sales.CancelProductItem;
 using Ambev.DeveloperEvaluation.Application.Sales.CancelSales;
 using Ambev.DeveloperEvaluation.Application.Sales.CreateSales;
+using Ambev.DeveloperEvaluation.Application.Sales.DeleteSales;
 using Ambev.DeveloperEvaluation.Application.Sales.GetByIdSales;
 using Ambev.DeveloperEvaluation.Application.Sales.SalesResult;
 using Ambev.DeveloperEvaluation.Application.Sales.UpdateSales;
@@ -40,7 +41,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales
         [ProducesResponseType(typeof(SaleResult), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetByIdAsync([FromRoute] int id)
         {
-            var command  = new GetByIdSalesCommand { Id = id };
+            var command = new GetByIdSalesCommand { Id = id };
 
             var result = await _mediator.Send(command);
 
@@ -76,6 +77,17 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales
         public async Task<IActionResult> Activate([FromRoute] int id)
         {
             var command = new ActivateSalesCommand { Id = id };
+
+            var result = await _mediator.Send(command);
+
+            return Ok(result);
+        }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(typeof(DeleteSalesResult), StatusCodes.Status200OK)]
+        public async Task<IActionResult> Delete([FromRoute] int id)
+        {
+            var command = new DeleteSalesCommand { Id = id };
 
             var result = await _mediator.Send(command);
 
