@@ -9,5 +9,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Repositories
         Task<int> GetNextSaleNumberAsync(CancellationToken cancellationToken = default);
 
         Task<Sale?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
+
+        Task<Sale> UpdateAsync(Sale sale, CancellationToken cancellation = default);
     }
 }

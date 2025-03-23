@@ -1,7 +1,9 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Sales.CreateSales;
 using Ambev.DeveloperEvaluation.Application.Sales.GetByIdSales;
 using Ambev.DeveloperEvaluation.Application.Sales.SalesResult;
+using Ambev.DeveloperEvaluation.Application.Sales.UpdateSales;
 using Ambev.DeveloperEvaluation.WebApi.Common;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sales.UpdateSales;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales
 {
     [ApiController]
-    [Route("api/sale")]
+    [Route("api/[controller]")]
     public class SalesController : BaseController
     {
         private readonly IMediator _mediator;
@@ -40,6 +42,19 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales
 
             return Ok(result);
         }
-      
+
+        [HttpPut("{id}")]
+        [ProducesResponseType(typeof(SaleResult), StatusCodes.Status200OK)]
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateSalesRequest request)
+        {
+            var command = _mapper.Map<UpdateSalesCommand>(request);
+
+            command.Id = id;
+
+            var result = await _mediator.Send(command);
+
+            return Ok(result);
+        }
+
     }
 }

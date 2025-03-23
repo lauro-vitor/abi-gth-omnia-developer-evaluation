@@ -42,6 +42,13 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
                   .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
         }
 
+        public async Task<Sale> UpdateAsync(Sale sale, CancellationToken cancellation = default)
+        {
+            _context.Sales.Update(sale);
+            await _context.SaveChangesAsync(cancellation);
+            return sale;
+        }
+
         public void Dispose()
         {
             _context?.Dispose();
