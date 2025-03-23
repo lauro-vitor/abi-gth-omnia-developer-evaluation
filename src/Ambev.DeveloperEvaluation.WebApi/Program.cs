@@ -61,7 +61,6 @@ public class Program
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
             app.UseHttpsRedirection();
 
             app.UseAuthentication();
@@ -70,6 +69,8 @@ public class Program
             app.UseBasicHealthChecks();
 
             app.MapControllers();
+
+            ApplyMigrations(app);
 
             app.Run();
         }
@@ -80,6 +81,22 @@ public class Program
         finally
         {
             Log.CloseAndFlush();
+        }
+    }
+    private static void ApplyMigrations(WebApplication app)
+    {
+        using (var scope = app.Services.CreateScope())
+        {
+            var dbContext = scope.ServiceProvider.GetRequiredService<DefaultContext>();
+
+            try
+            {
+                dbContext.Database.Migrate();
+            }
+            catch (Exception)
+            {
+
+            }
         }
     }
 }
