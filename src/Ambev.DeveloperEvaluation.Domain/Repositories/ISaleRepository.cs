@@ -6,6 +6,8 @@ namespace Ambev.DeveloperEvaluation.Domain.Repositories
     {
         Task<Sale> CreateAsync(Sale sale, CancellationToken cancellationToken = default);
 
+        IQueryable<Sale> GetAll();
+
         Task<int> GetNextSaleNumberAsync(CancellationToken cancellationToken = default);
 
         Task<Sale?> GetByIdAsync(int id, CancellationToken cancellationToken = default);

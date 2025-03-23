@@ -4,6 +4,7 @@ using Ambev.DeveloperEvaluation.Application.Sales.CancelProductItem;
 using Ambev.DeveloperEvaluation.Application.Sales.CancelSales;
 using Ambev.DeveloperEvaluation.Application.Sales.CreateSales;
 using Ambev.DeveloperEvaluation.Application.Sales.DeleteSales;
+using Ambev.DeveloperEvaluation.Application.Sales.GetAllSales;
 using Ambev.DeveloperEvaluation.Application.Sales.GetByIdSales;
 using Ambev.DeveloperEvaluation.Application.Sales.SalesResult;
 using Ambev.DeveloperEvaluation.Application.Sales.UpdateSales;
@@ -35,6 +36,20 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales
             var result = await _mediator.Send(command);
 
             return Created(string.Empty, result);
+        }
+
+        [HttpGet]
+        [ProducesResponseType(typeof(PaginatedList<SaleResult>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAll(
+            [FromQuery] GetAllSaleCommand command, 
+            [FromQuery(Name = "_page")] int pageNumber = 1,
+            [FromQuery(Name = "_size")] int pageSize = 10)
+        {
+            var result = await _mediator.Send(command);
+
+            var paginaedList = await PaginatedList<SaleResult>.CreateAsync(result, pageNumber, pageSize);
+
+            return OkPaginated(paginaedList);
         }
 
         [HttpGet("{id}")]

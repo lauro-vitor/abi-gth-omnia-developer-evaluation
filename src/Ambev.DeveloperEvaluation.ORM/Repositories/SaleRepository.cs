@@ -21,6 +21,14 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
             return sale;
         }
 
+        public IQueryable<Sale> GetAll()
+        {
+            return _context.Sales
+                .AsNoTracking()
+                .Include(s => s.User)
+                .Include(s => s.SaleProductItems).ThenInclude(i => i.Product);
+        }
+
         public async Task<int> GetNextSaleNumberAsync(CancellationToken cancellationToken = default)
         {
             var maxSaleNumber = await _context.Sales
@@ -70,7 +78,7 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
             }
 
             _context.SaleProductItems.RemoveRange(sale.SaleProductItems);
-           
+
             _context.Sales.Remove(sale);
 
             await _context.SaveChangesAsync(cancellationToken);
@@ -83,5 +91,7 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
             _context?.Dispose();
             GC.SuppressFinalize(this);
         }
+
+
     }
 }
