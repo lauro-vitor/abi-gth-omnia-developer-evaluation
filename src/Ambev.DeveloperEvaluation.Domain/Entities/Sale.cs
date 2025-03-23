@@ -48,64 +48,6 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
             }
         }
 
-        public void Cancell()
-        {
-            if (Status == SaleStatus.Cancelled)
-            {
-                return;
-            }
-
-            foreach (var saleProductItem in SaleProductItems)
-            {
-                saleProductItem.Cancell();
-            }
-
-            Status = SaleStatus.Cancelled;
-            UpdatedAt = DateTime.UtcNow;
-        }
-
-        public void CancellProductItem(int saleProductItemId)
-        {
-            if (Status == SaleStatus.Cancelled)
-            {
-                return;
-            }
-
-            var saleProductItem = SaleProductItems.FirstOrDefault(i => i.Id == saleProductItemId);
-
-            if (saleProductItem == null)
-            {
-                return;
-            }
-
-            saleProductItem.Cancell();
-
-            CalculateTotals();
-
-            UpdatedAt = DateTime.UtcNow;
-        }
-
-        public void ActiveProductItem(int saleProductItemId)
-        {
-            if (Status == SaleStatus.Cancelled)
-            {
-                return;
-            }
-
-            var saleProductItem = SaleProductItems.FirstOrDefault(i => i.Id == saleProductItemId);
-
-            if (saleProductItem == null)
-            {
-                return;
-            }
-
-            saleProductItem.Activate();
-
-            CalculateTotals();
-
-            UpdatedAt = DateTime.UtcNow;
-        }
-
         public void CalculateTotals()
         {
             Discounts = 0;
@@ -173,8 +115,11 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
 
             if (SaleNumber <= 0)
                 throw new ArgumentException("Sale number must be greater than zero.", nameof(SaleNumber));
+        }
 
-
+        public bool IsCancelled()
+        {
+            return Status == SaleStatus.Cancelled;
         }
 
     }

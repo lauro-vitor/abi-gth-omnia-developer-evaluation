@@ -1,6 +1,7 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Ambev.DeveloperEvaluation.ORM.Repositories
 {
@@ -26,7 +27,7 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
                 .AsNoTracking()
                 .MaxAsync(s => s.SaleNumber, cancellationToken);
 
-            if(maxSaleNumber <= 0)
+            if (maxSaleNumber <= 0)
             {
                 return 1;
             }
@@ -42,11 +43,21 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
                   .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
         }
 
-        public async Task<Sale> UpdateAsync(Sale sale, CancellationToken cancellation = default)
+        public async Task<Sale> UpdateAsync(Sale sale, CancellationToken cancellationToken = default)
         {
             _context.Sales.Update(sale);
-            await _context.SaveChangesAsync(cancellation);
+            await _context.SaveChangesAsync(cancellationToken);
             return sale;
+        }
+
+        public Task<Sale?> GetBydProductItemAsync(int productItemId, CancellationToken cancellationToken = default)
+        {
+            Expression<Func<Sale, bool>> filterExpression = s => s.SaleProductItems.Any(i => i.Id == productItemId);
+
+            return _context.Sales
+                .Include(s => s.User)
+                .Include(s => s.SaleProductItems).ThenInclude(i => i.Product)
+                .FirstOrDefaultAsync(filterExpression, cancellationToken);
         }
 
         public void Dispose()
@@ -54,5 +65,7 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
             _context?.Dispose();
             GC.SuppressFinalize(this);
         }
+
+
     }
 }

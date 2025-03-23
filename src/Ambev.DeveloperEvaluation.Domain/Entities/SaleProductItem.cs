@@ -55,7 +55,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
             UpdatedAt = DateTime.UtcNow;
         }
 
-        public void Cancell()
+        public void Cancel()
         {
             Status = SaleProductItemStatus.Cancelled;
             UpdatedAt = DateTime.UtcNow;
