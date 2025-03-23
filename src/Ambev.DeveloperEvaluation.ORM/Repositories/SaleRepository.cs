@@ -20,8 +20,6 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
             return sale;
         }
 
-       
-
         public async Task<int> GetNextSaleNumberAsync(CancellationToken cancellationToken = default)
         {
             var maxSaleNumber = await _context.Sales
@@ -34,6 +32,14 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
             }
 
             return maxSaleNumber + 1;
+        }
+
+        public async Task<Sale?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+        {
+            return await _context.Sales
+                  .Include(s => s.User)
+                  .Include(s => s.SaleProductItems).ThenInclude(i => i.Product)
+                  .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
         }
 
         public void Dispose()
