@@ -1,4 +1,5 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Repositories;
+﻿using Ambev.DeveloperEvaluation.Domain.Enums;
+using Ambev.DeveloperEvaluation.Domain.Repositories;
 using AutoMapper;
 using MediatR;
 
@@ -34,6 +35,11 @@ namespace Ambev.DeveloperEvaluation.Application.Carts.UpdateCart
             if (cart == null)
             {
                 throw new InvalidOperationException("Cart not found.");
+            }
+
+            if (cart.Status == CartStatus.SaleConfirmed)
+            {
+                throw new InvalidOperationException("It is not possible to update the cart because it has a confirmed sale status.");
             }
 
             if (user == null)
