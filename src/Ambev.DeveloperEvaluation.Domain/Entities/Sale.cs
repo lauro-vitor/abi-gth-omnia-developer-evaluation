@@ -165,11 +165,16 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
             if (Cart == null)
                 throw new ArgumentNullException(nameof(Cart));
 
+            if (Cart.Status == CartStatus.SaleConfirmed)
+                throw new InvalidOperationException("The cart is already in a confirmed sale, therefore it is not possible to continue with the operation.");
+
             if (User == null)
                 throw new ArgumentNullException(nameof(User));
 
             if (SaleNumber <= 0)
                 throw new ArgumentException("Sale number must be greater than zero.", nameof(SaleNumber));
+
+
         }
 
     }

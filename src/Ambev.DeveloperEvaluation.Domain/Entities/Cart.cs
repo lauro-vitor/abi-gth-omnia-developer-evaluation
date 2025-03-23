@@ -94,5 +94,11 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
             }
         }
 
+        public void SetStatusAsSaleConfirmed()
+        {
+            Status = CartStatus.SaleConfirmed;
+            UpdateAt = DateTime.UtcNow;
+        }
+
     }
 }
