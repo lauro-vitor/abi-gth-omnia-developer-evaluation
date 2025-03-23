@@ -122,5 +122,11 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
             return Status == SaleStatus.Cancelled;
         }
 
+        public void Cancel()
+        {
+            Status = SaleStatus.Cancelled;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Sales.ActivateProductItem;
 using Ambev.DeveloperEvaluation.Application.Sales.CancelProductItem;
+using Ambev.DeveloperEvaluation.Application.Sales.CancelSales;
 using Ambev.DeveloperEvaluation.Application.Sales.CreateSales;
 using Ambev.DeveloperEvaluation.Application.Sales.GetByIdSales;
 using Ambev.DeveloperEvaluation.Application.Sales.SalesResult;
@@ -52,6 +53,17 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales
             var command = _mapper.Map<UpdateSalesCommand>(request);
 
             command.Id = id;
+
+            var result = await _mediator.Send(command);
+
+            return Ok(result);
+        }
+
+        [HttpPut("cancel/{id}")]
+        [ProducesResponseType(typeof(SaleResult), StatusCodes.Status200OK)]
+        public async Task<IActionResult> Cancel([FromRoute] int id)
+        {
+            var command = new CancelSalesCommand { Id = id };
 
             var result = await _mediator.Send(command);
 
