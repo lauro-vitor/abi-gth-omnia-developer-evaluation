@@ -127,7 +127,8 @@ public class User : BaseEntity, IUser
     /// <returns>The user's role as a string.</returns>
     string IUser.Role => Role.ToString();
 
-    public virtual ICollection<Cart> Carts { get; set; }
+    public virtual ICollection<Cart> Carts { get; set; } = [];
+    public virtual ICollection<Sale> Sales { get; set; } = [];
 
     /// <summary>
     /// Initializes a new instance of the User class.

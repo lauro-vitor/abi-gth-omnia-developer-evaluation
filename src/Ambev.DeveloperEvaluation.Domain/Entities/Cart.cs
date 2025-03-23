@@ -20,10 +20,13 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
 
         public CartStatus Status { get; set; }
 
+        public virtual ICollection<Sale> Sales { get; set; }
+
         public Cart()
         {
-            CartProductItems = [];
             User = new User();
+            CartProductItems = [];
+            Sales = [];
         }
 
         public void Create(DateTime date, User user)

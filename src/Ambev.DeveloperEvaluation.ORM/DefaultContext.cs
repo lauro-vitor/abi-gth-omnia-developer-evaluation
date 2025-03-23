@@ -14,6 +14,10 @@ public class DefaultContext : DbContext
 
     public DbSet<Product> Products { get; set; }
 
+    public DbSet<Sale> Sales { get; set; }
+
+    public DbSet<SaleProductItem> SaleProductItems { get; set; }
+
     public DefaultContext(DbContextOptions<DefaultContext> options) : base(options)
     {
     }

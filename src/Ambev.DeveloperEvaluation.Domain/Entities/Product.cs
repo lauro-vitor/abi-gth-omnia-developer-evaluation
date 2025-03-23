@@ -57,6 +57,7 @@ public class Product
     public DateTime? UpdatedAt { get; set; }
 
     public virtual ICollection<CartProductItem> CartProducts { get; set; } = [];
+    public virtual ICollection<SaleProductItem> SaleProductsItems { get; set; } = [];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Product"/> class.
