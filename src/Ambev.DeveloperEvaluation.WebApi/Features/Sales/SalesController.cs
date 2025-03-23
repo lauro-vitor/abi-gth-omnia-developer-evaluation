@@ -61,7 +61,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales
         [ProducesResponseType(typeof(SaleResult), StatusCodes.Status200OK)]
         public async Task<IActionResult> CancelProductItem([FromRoute] int id)
         {
-            var command = new CancelProductItemCommand { Id = id };
+            var command = new CancelProductItemCommand { ProductItemId = id };
 
             var result = await _mediator.Send(command);
 

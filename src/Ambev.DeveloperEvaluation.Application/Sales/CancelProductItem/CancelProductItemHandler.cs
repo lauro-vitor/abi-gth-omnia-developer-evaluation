@@ -20,7 +20,7 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.CancelProductItem
 
         public async Task<SaleResult> Handle(CancelProductItemCommand command, CancellationToken cancellationToken)
         {
-            var sale = await _saleRepository.GetBydProductItemAsync(command.Id, cancellationToken);
+            var sale = await _saleRepository.GetBydProductItemAsync(command.ProductItemId, cancellationToken);
 
             if (sale == null)
             {
@@ -32,7 +32,7 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.CancelProductItem
                 throw new InvalidOperationException("To cancel an item from sale, the sale must not be cancelled.");
             }
 
-            var productItem = sale.SaleProductItems.FirstOrDefault(i => i.Id == command.Id);
+            var productItem = sale.SaleProductItems.FirstOrDefault(i => i.Id == command.ProductItemId);
 
             if (productItem == null)
             {
