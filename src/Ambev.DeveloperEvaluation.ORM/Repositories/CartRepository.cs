@@ -34,6 +34,7 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
         public async Task<Cart?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             return await _context.Carts
+                .Include(c => c.User)
                 .Include(c => c.CartProductItems)
                 .ThenInclude(c => c.Product)
                 .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
